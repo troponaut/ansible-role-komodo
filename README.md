@@ -1,6 +1,6 @@
 # Ansible Role for Komodo
 
-This role is designed for managing systemd deployments of the (https://github.com/mbecker20/komodo)[komodo] periphery agent
+This role is designed for managing systemd deployments of the [komodo](https://github.com/mbecker20/komodo) periphery agent
 trying to minimize the permissions available to the service by creating a service user
 and running the systemd service as that user. The user will only have access to:
 
