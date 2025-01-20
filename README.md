@@ -115,8 +115,8 @@ playbook and control behavior with variables. Here is an example of doing it wit
             35386565333538623231643433396334323132616438353839663534373030393266
     ```
 
-Note that you can just enter a cleartext passkey here instead if not using the vault. This playbook will
-default to an install of v1.16.12, but this can be overridden.
+    Note that you can just enter a cleartext passkey here instead if not using the vault. This playbook will
+    default to an install of v1.16.12, but this can be overridden.
 
 5. Run the playbook
 
