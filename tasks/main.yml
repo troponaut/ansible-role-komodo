@@ -1,0 +1,22 @@
+---
+- name: Check if {{ komodo_user }} user exists
+  command: id -u {{ komodo_user }}
+  register: komodo_user_check
+  failed_when: false   
+  changed_when: false  
+
+- name: Set komodo_user_exists fact
+  set_fact:
+    komodo_user_exists: "{{ komodo_user_check.rc == 0 }}"
+
+- name: Include install tasks
+  import_tasks: install.yml
+  when: komodo_action == "install"
+
+- name: Include update tasks
+  import_tasks: update.yml
+  when: komodo_action == "update"
+
+- name: Include uninstall tasks
+  import_tasks: uninstall.yml
+  when: komodo_action == "uninstall"

@@ -1,0 +1,44 @@
+---
+
+- name: Stop periphery service
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user stop periphery || true
+  become: yes
+  become_user: "{{ komodo_user }}"
+
+- name: Disable lingering for komodo user
+  command: loginctl disable-linger {{ komodo_user }}
+  changed_when: false
+  when: komodo_delete_user | default(false)
+
+- name: Remove komodo directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ komodo_bin_dir }}"
+    - "{{ komodo_config_dir }}"
+    - "{{ komodo_service_dir }}"
+    - "/etc/komodo/ssl"
+  become: yes
+
+- name: Disable and remove periphery service
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user disable periphery || true
+    rm -f {{ komodo_service_path }}
+  become: yes
+  become_user: "{{ komodo_user }}"
+
+- name: Remove komodo user
+  user:
+    name: "{{ komodo_user }}"
+    state: absent
+    remove: yes
+  become: yes
+  when: komodo_delete_user | default(false)
+
+- name: Debug message after uninstall
+  debug:
+    msg: "Uninstallation of {{ komodo_user }} completed successfully! (User removed: {{ komodo_delete_user | default(false) }})"

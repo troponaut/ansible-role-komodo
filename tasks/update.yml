@@ -1,0 +1,75 @@
+
+
+- name: Stop periphery service
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user stop periphery || true
+  become: yes
+  become_user: "{{ komodo_user }}"
+
+- name: Remove old Komodo Periphery binary
+  file:
+    path: "{{ komodo_bin_path }}"
+    state: absent
+  become: yes
+  when: komodo_bin_path is defined
+
+- name: Ensure necessary directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+    mode: "0750"
+  with_items:
+    - "{{ komodo_bin_dir }}"
+    - "{{ komodo_config_dir }}"
+    - "{{ komodo_service_dir }}"
+
+- name: Ensure SSL directory exists
+  file:
+    path: "/etc/komodo/ssl"
+    state: directory
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+    mode: "0750"
+  become: yes
+  when: ssl_enabled | default(true)
+
+- name: Download Komodo {{ komodo_version }} Periphery Agent
+  get_url:
+    url: "https://github.com/mbecker20/komodo/releases/download/{{ komodo_version }}/{{ komodo_bin }}"
+    dest: "{{ komodo_bin_path }}"
+    mode: "0755"
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+
+- name: Deploy configuration file
+  template:
+    src: periphery.config.toml.j2
+    dest: "{{ komodo_config_path }}"
+    mode: "0640"
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+
+- name: Deploy systemd user service file
+  template:
+    src: periphery.service.j2
+    dest: "{{ komodo_service_path }}"
+    mode: "0644"
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+
+- name: Reload systemd for {{ komodo_user }} user
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user daemon-reload
+  become: yes
+  become_user: "{{ komodo_user }}"
+
+- name: Restart periphery service after update
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user restart periphery
+  become: yes
+  become_user: "{{ komodo_user }}"

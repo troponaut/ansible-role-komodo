@@ -1,0 +1,29 @@
+################################
+# 🦎 PERIPHERY CONFIG 🦎 #
+################################
+
+# General server settings
+port = {{periphery_port}}
+repo_dir = "{{ repo_dir }}"
+stack_dir = "{{ stack_dir }}"
+stats_polling_rate = "{{ stacks_polling_rate }}"  
+
+# Docker CLI options
+legacy_compose_cli = false
+
+###########
+# Security #
+###########
+
+ssl_enabled = true
+
+allowed_ips = {{komodo_allowed_ips}}
+passkeys = ["{{ passkey }}"]
+
+###########
+# Logging #
+###########
+
+logging.level = "info"
+logging.stdio = "standard"
+logging.opentelemetry_service_name = "Komodo-Periphery"

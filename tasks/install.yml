@@ -1,0 +1,85 @@
+- name: Ensure {{ komodo_user }} user exists
+  user:
+    name: "{{ komodo_user }}"
+    shell: /usr/sbin/nologin
+    create_home: yes
+    home: "{{ komodo_home }}"
+  when: komodo_user_exists is not defined or not komodo_user_exists
+
+- name: Ensure necessary directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+    mode: "0750"
+  with_items:
+    - "{{ komodo_bin_dir }}"
+    - "{{ komodo_config_dir }}"
+    - "{{ komodo_service_dir }}"
+
+- name: Ensure SSL directory exists
+  file:
+    path: "/etc/komodo/ssl"
+    state: directory
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+    mode: "0750"
+  become: yes
+  when: ssl_enabled | default(true)
+
+- name: Add {{ komodo_user }} user to the docker group
+  user:
+    name: "{{ komodo_user }}"
+    groups: docker
+    append: yes
+
+- name: Enable lingering for {{ komodo_user }} user
+  command: loginctl enable-linger {{ komodo_user }}
+  changed_when: false
+
+- name: Stop periphery service
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user stop periphery || true
+  become: yes
+  become_user: "{{ komodo_user }}"
+
+- name: Download Komodo Periphery Agent
+  get_url:
+    url: "https://github.com/mbecker20/komodo/releases/download/{{ komodo_version }}/{{ komodo_bin }}"
+    dest: "{{ komodo_bin_path }}"
+    mode: "0755"
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+
+- name: Deploy configuration file
+  template:
+    src: periphery.config.toml.j2
+    dest: "{{ komodo_config_path }}"
+    mode: "0640"
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+
+- name: Deploy systemd user service file
+  template:
+    src: periphery.service.j2
+    dest: "{{ komodo_service_path }}"
+    mode: "0644"
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+
+- name: Reload systemd for {{ komodo_user }} user
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user daemon-reload
+  become: yes
+  become_user: "{{ komodo_user }}"
+
+- name: Enable and start periphery service
+  shell: |
+    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
+    systemctl --user enable --now periphery
+  become: yes
+  become_user: "{{ komodo_user }}"
+
