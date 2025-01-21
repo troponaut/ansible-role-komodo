@@ -57,12 +57,12 @@ You will also need to change the variable for `passkey` to
     ```yaml
     komodo:
         hosts:
-            komodo_core_host:
+            komodo_periphery1:
                 ansible_host: 192.168.10.20
                 komodo_allowed_ips:
                     - "127.0.0.1"
-            komodo_periphery_agent1:
-                ansible_host: 192.168.10.20
+            komodo_periphery2:
+                ansible_host: 192.168.10.21
                 komodo_allowed_ips:
                     - "192.168.10.20"
     ```
