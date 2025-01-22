@@ -53,7 +53,7 @@ You will also need to change the variable for `passkey` to
 ## Installation / Setup
 
 1. `ansible-galaxy role install bpbradley.komodo`
-2. Create an `inventory/hosts.yml` file which specifies your komodo hosts and indicates the allowed_ips if desired
+2. Create an `inventory/komodo.yml` file which specifies your komodo hosts and indicates the allowed_ips if desired
     ```yaml
     komodo:
         hosts:
