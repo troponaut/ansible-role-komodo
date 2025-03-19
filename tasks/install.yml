@@ -61,6 +61,7 @@
     mode: "0755"
     owner: "{{ komodo_user }}"
     group: "{{ komodo_group }}"
+    force: yes
 
 - name: Deploy configuration file
   template:
