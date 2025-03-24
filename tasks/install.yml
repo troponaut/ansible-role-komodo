@@ -50,13 +50,25 @@
     msg: "Unsupported architecture: {{ ansible_architecture }}. Supported architectures are x86_64 and aarch64."
   when: ansible_architecture not in ['x86_64', 'aarch64']
 
-- name: Set Komodo binary based on architecture
+# Choose binary_name based on user override, architecture, and version
+- name: Select Komodo binary
   set_fact:
-    komodo_bin: "{{ komodo_bin if ansible_architecture == 'x86_64' else komodo_bin_aarch64 }}"
+    binary_name: >-
+      {%- if komodo_bin | length > 0 -%}
+        {{ komodo_bin }}
+      {%- elif ansible_architecture == 'aarch64' -%}
+        {{ komodo_bin_aarch64 }}
+      {%- else -%}  {# x86_64 #}
+        {%- if komodo_version|regex_replace('^v','') is version('1.16.12','>=') -%}
+          {{ komodo_bin_x86 }}
+        {%- else -%}
+          {{ komodo_bin_x86_legacy }}
+        {%- endif -%}
+      {%- endif -%}
 
 - name: Download Komodo Periphery Agent
   get_url:
-    url: "https://github.com/moghtech/komodo/releases/download/{{ komodo_version }}/{{ komodo_bin }}"
+    url: "https://github.com/moghtech/komodo/releases/download/{{ komodo_version }}/{{ binary_name }}"
     dest: "{{ komodo_bin_path }}"
     mode: "0755"
     owner: "{{ komodo_user }}"
