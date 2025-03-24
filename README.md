@@ -132,7 +132,6 @@ playbook and control behavior with variables. Here is an example of doing it wit
     ```sh
     ansible-playbook -i inventory/komodo.yaml playbooks/komodo.yml \
     -e "komodo_version=v1.16.11" \
-    -e "komodo_bin=periphery" \
     --vault-password-file .vault_pass
     ```
 
