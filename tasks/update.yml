@@ -47,7 +47,7 @@
 
 - name: Download Komodo {{ komodo_version }} Periphery Agent
   get_url:
-    url: "https://github.com/mbecker20/komodo/releases/download/{{ komodo_version }}/{{ komodo_bin }}"
+    url: "https://github.com/moghtech/komodo/releases/download/{{ komodo_version }}/{{ komodo_bin }}"
     dest: "{{ komodo_bin_path }}"
     mode: "0755"
     owner: "{{ komodo_user }}"
