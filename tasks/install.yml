@@ -45,6 +45,15 @@
   become: yes
   become_user: "{{ komodo_user }}"
 
+- name: Fail if unsupported architecture
+  fail:
+    msg: "Unsupported architecture: {{ ansible_architecture }}. Supported architectures are x86_64 and aarch64."
+  when: ansible_architecture not in ['x86_64', 'aarch64']
+
+- name: Set Komodo binary based on architecture
+  set_fact:
+    komodo_bin: "{{ komodo_bin if ansible_architecture == 'x86_64' else komodo_bin_aarch64 }}"
+
 - name: Download Komodo Periphery Agent
   get_url:
     url: "https://github.com/mbecker20/komodo/releases/download/{{ komodo_version }}/{{ komodo_bin }}"
@@ -52,6 +61,7 @@
     mode: "0755"
     owner: "{{ komodo_user }}"
     group: "{{ komodo_group }}"
+    force: yes
 
 - name: Deploy configuration file
   template:
