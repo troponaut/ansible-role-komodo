@@ -57,6 +57,15 @@
         {%- endif -%}
       {%- endif -%}
 
+- name: Debug binary selection
+  debug:
+    msg: >-
+      {%- if komodo_bin | length > 0 -%}
+        Using override binary name: {{ komodo_bin }}
+      {%- else -%}
+        Selecting {{ binary_name }} as target binary for verion: {{ komodo_version }} and arch: {{ ansible_architecture }}
+      {%- endif -%}
+
 - name: Download Komodo Periphery Agent
   get_url:
     url: "https://github.com/moghtech/komodo/releases/download/{{ komodo_version }}/{{ binary_name }}"
