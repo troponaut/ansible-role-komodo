@@ -117,9 +117,15 @@ playbook and control behavior with variables. Here is an example of doing it wit
 
     Note that you can just enter a cleartext passkey here instead if not using the vault. This playbook will
     default to an install of v1.16.12, but this can be overridden.
+   
+6. Run the playbook
 
-5. Run the playbook
-
+    > **Note for Ubuntu remote hosts**
+    Before running the playbook, it seems that the acl package may be missing on Ubuntu which is necessary for Ansible
+    when creating users. So if you are using the `install` function and creating a new system user, 
+    you need to run `sudo apt install acl` *on the remote host*. In a future release I will look into making sure this is checked and
+    installed automatically.
+   
     Install using default values
 
     ```sh
