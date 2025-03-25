@@ -124,7 +124,7 @@ playbook and control behavior with variables. Here is an example of doing it wit
     Before running the playbook, it seems that the acl package may be missing on Ubuntu which is necessary for Ansible
     when creating users. So if you are using the `install` function and creating a new system user, 
     you need to run `sudo apt install acl` *on the remote host*. In a future release I will look into making sure this is checked and
-    installed automatically.
+    installed automatically. In general, if you get a cryptic message about failure to set temporary files, try installing `acl` package.
    
     Install using default values
 
