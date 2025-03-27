@@ -32,7 +32,6 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
 
 - **`komodo_version`**  
   - The version of Komodo Periphery to install or update.
-  - Example: `v1.16.12`
 
 - **`komodo_delete_user`**  
   - If `true` during `uninstall`, removes the `komodo_user` entirely.
