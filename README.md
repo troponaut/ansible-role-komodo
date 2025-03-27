@@ -116,7 +116,8 @@ playbook and control behavior with variables. Here is an example of doing it wit
     ```
 
     Note that you can just enter a cleartext passkey here instead if not using the vault. This playbook will
-    default to an install of v1.16.12, but this can be overridden.
+    default to install the latest version of komodo periphery (at the date of last publish, which will also
+    be reflected in this example playbook)
    
 6. Run the playbook
 
