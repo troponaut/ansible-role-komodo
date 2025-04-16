@@ -14,17 +14,15 @@
 - name: Select Komodo binary
   ansible.builtin.set_fact:
     binary_name: >-
-      { %- if komodo_bin | length > 0 -% }
+      {%- if komodo_bin | length > 0 -%}
         {{ komodo_bin }}
-      { %- elif ansible_architecture == 'aarch64' -% }
+      {%- elif ansible_architecture == 'aarch64' -%}
         {{ komodo_bin_aarch64 }}
-      { %- else -% } { # x86_64 # }
-        { %- if (komodo_version | regex_replace('^v', '')) is version('1.16.12', '>=') -% }
+      {%- else -%} {# x86_64 #}{%- if (komodo_version | regex_replace('^v', '')) is version('1.16.12', '>=') -%}
           {{ komodo_bin_x86 }}
-        { %- else -% }
+      {%- else -%}
           {{ komodo_bin_x86_legacy }}
-        { %- endif -% }
-      { %- endif -% }
+      {%- endif -%} {%- endif -%}
   when: komodo_action == "install" or komodo_action == "update"
 
 - name: Include install tasks
