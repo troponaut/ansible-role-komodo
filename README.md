@@ -23,6 +23,13 @@ the numerous edge cases which appear when running it as a docker container.
 
 Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for more details:
 
+> **Note for Komodo version v1.17.1+ **
+[komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) introduced a possible breaking change
+in order to support IPv6. I am going to continue to honor the upstream default settings, so pay attention
+to the breaking changes in this release. I have introduced a new variable to support this, `komodo_bind_ip`
+which you can set to `0.0.0.0` to return to the previous behavior. This can be easily set in the inventory
+files as shown in the below examples
+
 - **`komodo_action`**  
   - Controls which operation is performed:
     - `"install"`: Installs the agent fresh
@@ -32,10 +39,6 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
 
 - **`komodo_version`**  
   - The version of Komodo Periphery to install or update.
-
-- **`komodo_delete_user`**  
-  - If `true` during `uninstall`, removes the `komodo_user` entirely.
-  - Default: `false`
   
 - **`passkey`**  
   - This must match the passkey set for your Komodo Core install
@@ -45,7 +48,7 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
   - You should set this to the host IP of Komodo Core, `127.0.0.1` For example, create a host file with the komodo_allowed_ips set there
 
 - **`komodo_bind_ip`**
-  - New feature to [komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) -- this allows IPv6 support in periphery. Playbook will use the default komodo behavior, but it can be overriden to the legacy behaviour by setting `komodo_bind_ip` to `0.0.0.0`
+  - New feature to [komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) -- this allows IPv6 support in periphery. Playbook will use the default komodo behavior, but it can be overriden to the legacy behavior by setting `komodo_bind_ip` to `0.0.0.0`
 
 The remaining variables in [`defaults/main.yml`](./defaults/main.yml) are set to sensible values, but you should
 review them and set according to your own needs
@@ -66,6 +69,7 @@ review them and set according to your own needs
                 ansible_host: 192.168.10.21
                 komodo_allowed_ips:
                     - "192.168.10.20"
+                komodo_bind_ip: 0.0.0.0
     ```
 3. **Optional** but recommended. Set an encrypted passkey using `ansible-vault` which matches the passkey set in Komodo Core.
 
