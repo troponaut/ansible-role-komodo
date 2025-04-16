@@ -28,7 +28,7 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
 in order to support IPv6. You can update your `komodo_allowed_ips` to reflect the IPv6 translation.
 Otherwise, I have introduced a new variable to support this, `komodo_bind_ip`
 which you can set to `0.0.0.0` to return to the previous behavior. This can be easily set in the inventory
-files as shown in the below examples. [I have also included a migration guide below](note-on-migration-to-v1171)
+files as shown in the below examples. [I have also included a migration guide below](#note-on-migration-to-v1171)
 
 - **`komodo_action`**  
   - Controls which operation is performed:
