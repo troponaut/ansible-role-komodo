@@ -1,4 +1,4 @@
-komodo_version: "v1.17.0"
+komodo_version: "v1.17.1"
 
 # The user can override komodo_bin directly if desired
 komodo_bin: ""
@@ -6,6 +6,13 @@ komodo_bin: ""
 # You should encrypt with `ansible-vault encrypt_string 'supersecretpasskey' --name 'passkey'` 
 # If encrypting, you must run with --ask-vault-pass or have a vault password file.
 passkey: 
+
+# New to v1.17.1 which introduces IPv6 support.
+# If you have issues, set `komodo_bind_ip` to `0.0.0.0`
+# to revert to previous behaviour.
+komodo_bind_ip: "[::]"
+
+# Replace with your komodo core IP if desired so that only core can access it
 komodo_allowed_ips: []
 
 komodo_user: "komodo"

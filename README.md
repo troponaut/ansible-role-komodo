@@ -23,6 +23,13 @@ the numerous edge cases which appear when running it as a docker container.
 
 Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for more details:
 
+> **Note for Komodo version v1.17.1+ **
+[komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) introduced a possible breaking change
+in order to support IPv6. I am going to continue to honor the upstream default settings, so pay attention
+to the breaking changes in this release. I have introduced a new variable to support this, `komodo_bind_ip`
+which you can set to `0.0.0.0` to return to the previous behavior. This can be easily set in the inventory
+files as shown in the below examples
+
 - **`komodo_action`**  
   - Controls which operation is performed:
     - `"install"`: Installs the agent fresh
@@ -32,10 +39,6 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
 
 - **`komodo_version`**  
   - The version of Komodo Periphery to install or update.
-
-- **`komodo_delete_user`**  
-  - If `true` during `uninstall`, removes the `komodo_user` entirely.
-  - Default: `false`
   
 - **`passkey`**  
   - This must match the passkey set for your Komodo Core install
@@ -44,10 +47,11 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
 - **`komodo_allowed_ips`**  
   - You should set this to the host IP of Komodo Core, `127.0.0.1` For example, create a host file with the komodo_allowed_ips set there
 
+- **`komodo_bind_ip`**
+  - New feature to [komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) -- this allows IPv6 support in periphery. Playbook will use the default komodo behavior, but it can be overriden to the legacy behavior by setting `komodo_bind_ip` to `0.0.0.0`
+
 The remaining variables in [`defaults/main.yml`](./defaults/main.yml) are set to sensible values, but you should
 review them and set according to your own needs
-
-You will also need to change the variable for `passkey` to 
 
 ## Installation / Setup
 
@@ -60,10 +64,12 @@ You will also need to change the variable for `passkey` to
                 ansible_host: 192.168.10.20
                 komodo_allowed_ips:
                     - "127.0.0.1"
+                komodo_bind_ip: 0.0.0.0
             komodo_periphery2:
                 ansible_host: 192.168.10.21
                 komodo_allowed_ips:
                     - "192.168.10.20"
+                komodo_bind_ip: 0.0.0.0
     ```
 3. **Optional** but recommended. Set an encrypted passkey using `ansible-vault` which matches the passkey set in Komodo Core.
 
@@ -104,7 +110,7 @@ playbook and control behavior with variables. Here is an example of doing it wit
       roles:
           - role: bpbradley.komodo
           komodo_action: "install"
-          komodo_version: "v1.17.0"
+          komodo_version: "v1.17.1"
           passkey: !vault |
               $ANSIBLE_VAULT;1.1;AES256
               65353234373130353539663661376563613539303866643963363830376661316638333139343366
@@ -120,12 +126,6 @@ playbook and control behavior with variables. Here is an example of doing it wit
    
 6. Run the playbook
 
-    > **Note for Ubuntu remote hosts**
-    Before running the playbook, it seems that the acl package may be missing on Ubuntu which is necessary for Ansible
-    when creating users. So if you are using the `install` function and creating a new system user, 
-    you need to run `sudo apt install acl` *on the remote host*. In a future release I will look into making sure this is checked and
-    installed automatically. In general, if you get a cryptic message about failure to set temporary files, try installing `acl` package.
-   
     Install using default values
 
     ```sh
@@ -146,7 +146,7 @@ playbook and control behavior with variables. Here is an example of doing it wit
     ```sh
     ansible-playbook -i inventory/komodo.yaml playbooks/komodo.yml \
     -e "komodo_action=update" \
-    -e "komodo_version=v1.17.0" \
+    -e "komodo_version=v1.17.1" \
     --vault-password-file .vault_pass
 
     ```
