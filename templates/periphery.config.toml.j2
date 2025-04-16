@@ -10,6 +10,7 @@ stats_polling_rate = "{{ stacks_polling_rate }}"
 
 {#-- Only add bind_ip for Komodo >= v1.17.1 --#}
 {% if (komodo_version | regex_replace('^v', '')) is version('1.17.1', '>=') %}
+{{''}}
 bind_ip = "{{ komodo_bind_ip }}"
 {% endif %}
 
