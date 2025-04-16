@@ -25,10 +25,10 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
 
 > **Note for Komodo version v1.17.1+**
 [komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) introduced a possible breaking change
-in order to support IPv6. I am going to continue to honor the upstream default settings, so pay attention
-to the breaking changes in this release. I have introduced a new variable to support this, `komodo_bind_ip`
+in order to support IPv6. You can update your `komodo_allowed_ips` to reflect the IPv6 translation.
+Otherwise, I have introduced a new variable to support this, `komodo_bind_ip`
 which you can set to `0.0.0.0` to return to the previous behavior. This can be easily set in the inventory
-files as shown in the below examples
+files as shown in the below examples. [I have also included a migration guide below](note-on-migration-to-v1171)
 
 - **`komodo_action`**  
   - Controls which operation is performed:
@@ -68,10 +68,12 @@ review them and set according to your own needs
             komodo_periphery2:
                 ansible_host: 192.168.10.21
                 komodo_allowed_ips:
-                    - "192.168.10.20"
-                komodo_bind_ip: 0.0.0.0
+                    - "::ffff:192.168.10.20"
     ```
-3. **Optional** but recommended. Set an encrypted passkey using `ansible-vault` which matches the passkey set in Komodo Core.
+    Note that this inventory file is for v1.17.1+ komodo versions, as it is supporting the new IPv6 translation layer, either with
+    the `'::ffff:` prefix in the `komodo_allowed_ips` or with a `komodo_bind_ip` of `0.0.0.0` as described in the documentation.
+   
+4. **Optional** but recommended. Set an encrypted passkey using `ansible-vault` which matches the passkey set in Komodo Core.
 
     ```sh
     ansible-vault encrypt_string 'supersecretpasskey' --name 'passkey'
@@ -98,7 +100,7 @@ review them and set according to your own needs
 
     Now you can call your playbook with `--vault-password-file .vault_pass`
 
-4. Create a playbook which selects the role. You can create multiple playbooks for install/uninstall/update, or just one
+5. Create a playbook which selects the role. You can create multiple playbooks for install/uninstall/update, or just one
 playbook and control behavior with variables. Here is an example of doing it with just one playbook.
 
     `playbooks/komodo.yml`
@@ -159,3 +161,46 @@ playbook and control behavior with variables. Here is an example of doing it wit
     -e "komodo_delete_user=true" \
     --vault-password-file .vault_pass
     ```
+### Note on Migration to v1.17.1
+
+If you are v1.17.0 or earlier and using `komodo_allowed_ips`, and intend to update to 1.17.1, you will need to:
+
+1. Update to the latest version of this role `ansible-galaxy role install bpbradley.komodo --force`
+2. Migrate your inventory or playbooks to account for the new IPv6 translation, or set the `komodo_bind_ip` to `0.0.0.0` to revert to legacy behavior.
+
+  Example inventory file v1.17.0 and earlier
+  
+  ```yaml
+    komodo:
+        hosts:
+            komodo_periphery:
+                ansible_host: 192.168.10.21
+                komodo_allowed_ips:
+                    - "192.168.10.20"
+  ```
+
+Would migrate to one of the following
+
+  a. Updating the `komodo_allowed_ips` to feature the IPv6 prefix, i.e. `192.168.10.20` -> `::ffff:192.168.10.20`
+
+  ```yaml
+  komodo:
+    hosts:
+        komodo_periphery:
+            ansible_host: 192.168.10.21
+            komodo_allowed_ips:
+                - "::ffff:192.168.10.20"
+  ```
+  
+  b. Adding the `komodo_bind_ip` variable which will revert to legacy behavior.
+
+  ```yaml
+  komodo:
+    hosts:
+        komodo_periphery:
+            ansible_host: 192.168.10.21
+            komodo_allowed_ips:
+                - "192.168.10.20"
+            komodo_bind_ip: 0.0.0.0
+  ```
+    
