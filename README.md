@@ -23,7 +23,7 @@ the numerous edge cases which appear when running it as a docker container.
 
 Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for more details:
 
-> **Note for Komodo version v1.17.1+ **
+> **Note for Komodo version v1.17.1+**
 [komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) introduced a possible breaking change
 in order to support IPv6. I am going to continue to honor the upstream default settings, so pay attention
 to the breaking changes in this release. I have introduced a new variable to support this, `komodo_bind_ip`
