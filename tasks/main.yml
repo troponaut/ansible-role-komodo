@@ -25,15 +25,7 @@
           {{ komodo_bin_x86_legacy }}
         {%- endif -%}
       {%- endif -%}
-
-- name: Debug binary selection
-  debug:
-    msg: >-
-      {%- if komodo_bin | length > 0 -%}
-        Using override binary name: {{ komodo_bin }}
-      {%- else -%}
-        Selecting {{ binary_name }} as target binary for version: {{ komodo_version }} and arch: {{ ansible_architecture }}
-      {%- endif -%}
+  when: komodo_action == "install" or komodo_action == "update"
 
 - name: Include install tasks
   import_tasks: install.yml
