@@ -1,3 +1,5 @@
+---
+
 - name: Ensure {{ komodo_user }} user exists
   user:
     name: "{{ komodo_user }}"
@@ -49,31 +51,6 @@
   fail:
     msg: "Unsupported architecture: {{ ansible_architecture }}. Supported architectures are x86_64 and aarch64."
   when: ansible_architecture not in ['x86_64', 'aarch64']
-
-# Choose binary_name based on user override, architecture, and version
-- name: Select Komodo binary
-  set_fact:
-    binary_name: >-
-      {%- if komodo_bin | length > 0 -%}
-        {{ komodo_bin }}
-      {%- elif ansible_architecture == 'aarch64' -%}
-        {{ komodo_bin_aarch64 }}
-      {%- else -%}  {# x86_64 #}
-        {%- if komodo_version|regex_replace('^v','') is version('1.16.12','>=') -%}
-          {{ komodo_bin_x86 }}
-        {%- else -%}
-          {{ komodo_bin_x86_legacy }}
-        {%- endif -%}
-      {%- endif -%}
-
-- name: Debug binary selection
-  debug:
-    msg: >-
-      {%- if komodo_bin | length > 0 -%}
-        Using override binary name: {{ komodo_bin }}
-      {%- else -%}
-        Selecting {{ binary_name }} as target binary for verion: {{ komodo_version }} and arch: {{ ansible_architecture }}
-      {%- endif -%}
 
 - name: Download Komodo Periphery Agent
   get_url:
