@@ -161,7 +161,7 @@ playbook and control behavior with variables. Here is an example of doing it wit
     -e "komodo_delete_user=true" \
     --vault-password-file .vault_pass
     ```
-### Note on Migration to v1.17.1
+### Note on Migration to v1.17.1+
 
 If you are v1.17.0 or earlier and using `komodo_allowed_ips`, and intend to update to 1.17.1, you will need to:
 
@@ -179,8 +179,8 @@ If you are v1.17.0 or earlier and using `komodo_allowed_ips`, and intend to upda
                     - "192.168.10.20"
   ```
 
-Would migrate to one of the following
-
+  Would migrate to one of the following
+  
   a. Updating the `komodo_allowed_ips` to feature the IPv6 prefix, i.e. `192.168.10.20` -> `::ffff:192.168.10.20`
 
   ```yaml
