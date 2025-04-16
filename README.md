@@ -44,10 +44,11 @@ Below are some key variables; see [`defaults/main.yml`](./defaults/main.yml) for
 - **`komodo_allowed_ips`**  
   - You should set this to the host IP of Komodo Core, `127.0.0.1` For example, create a host file with the komodo_allowed_ips set there
 
+- **`komodo_bind_ip`**
+  - New feature to [komodo 1.17.1](https://github.com/moghtech/komodo/releases/tag/v1.17.1) -- this allows IPv6 support in periphery. Playbook will use the default komodo behavior, but it can be overriden to the legacy behaviour by setting `komodo_bind_ip` to `0.0.0.0`
+
 The remaining variables in [`defaults/main.yml`](./defaults/main.yml) are set to sensible values, but you should
 review them and set according to your own needs
-
-You will also need to change the variable for `passkey` to 
 
 ## Installation / Setup
 
@@ -60,6 +61,7 @@ You will also need to change the variable for `passkey` to
                 ansible_host: 192.168.10.20
                 komodo_allowed_ips:
                     - "127.0.0.1"
+                komodo_bind_ip: 0.0.0.0
             komodo_periphery2:
                 ansible_host: 192.168.10.21
                 komodo_allowed_ips:
@@ -120,12 +122,6 @@ playbook and control behavior with variables. Here is an example of doing it wit
    
 6. Run the playbook
 
-    > **Note for Ubuntu remote hosts**
-    Before running the playbook, it seems that the acl package may be missing on Ubuntu which is necessary for Ansible
-    when creating users. So if you are using the `install` function and creating a new system user, 
-    you need to run `sudo apt install acl` *on the remote host*. In a future release I will look into making sure this is checked and
-    installed automatically. In general, if you get a cryptic message about failure to set temporary files, try installing `acl` package.
-   
     Install using default values
 
     ```sh

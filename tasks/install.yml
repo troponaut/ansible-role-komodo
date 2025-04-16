@@ -1,5 +1,12 @@
 ---
 
+- name: Ensure ACL package exists when creating a new user
+  apt:
+    name: acl
+    state: present
+  become: yes
+  when: komodo_user_exists is not defined or not komodo_user_exists
+
 - name: Ensure {{ komodo_user }} user exists
   user:
     name: "{{ komodo_user }}"
