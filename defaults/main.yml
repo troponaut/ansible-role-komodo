@@ -1,4 +1,4 @@
-komodo_version: "v1.17.4"
+komodo_version: "v1.17.5"
 
 # The user can override komodo_bin directly if desired
 komodo_bin: ""
