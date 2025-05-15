@@ -24,7 +24,10 @@ legacy_compose_cli = false
 ssl_enabled = true
 
 allowed_ips = {{komodo_allowed_ips}}
+
+{% if passkey %}
 passkeys = ["{{ passkey }}"]
+{% endif %}
 
 ###########
 # Logging #
