@@ -53,6 +53,18 @@ files as shown in the below examples. [I have also included a migration guide be
 The remaining variables in [`defaults/main.yml`](./defaults/main.yml) are set to sensible values, but you should
 review them and set according to your own needs
 
+## Overriding default configuration templates
+
+In some cases, it may be desirable to have more control over the exact service files and/or configuration files deployed to each periphery node.
+In this case, the default / interpolated configurations and service files may not be ideal. These configurations can be overridden by manually providing
+the config and/or service files and setting them in your playbook to `komodo_config_file_template` and `komodo_service_file_template`, for the
+periphery configuration and the systemd service file, respectively.
+
+Note that in doing so, the deployed files will be exactly as you specify, and they will always take precedence over any other specified variables.
+
+For example, if you set a `passkey` or `komodo_bind_ip` variable manually, these will be overridden by the contents
+and behavior of your supplied `komodo_config_file_template`.
+
 ## Installation / Setup
 
 1. `ansible-galaxy role install bpbradley.komodo`
