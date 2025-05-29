@@ -11,6 +11,9 @@
   ansible.builtin.user:
     name: "{{ komodo_user }}"
     shell: /usr/sbin/nologin
+    uid: "{{ komodo_user_uid }}"
+    groups: docker
+    append: true
     create_home: true
     home: "{{ komodo_home }}"
   when: komodo_user_exists is not defined or not komodo_user_exists
@@ -36,12 +39,6 @@
     mode: "0750"
   become: true
   when: ssl_enabled | default(true)
-
-- name: Add Komodo user to the docker group
-  ansible.builtin.user:
-    name: "{{ komodo_user }}"
-    groups: docker
-    append: true
 
 - name: Enable lingering for Komodo user
   ansible.builtin.command: loginctl enable-linger {{ komodo_user }}

@@ -17,6 +17,7 @@ komodo_allowed_ips: []
 
 komodo_user: "komodo"
 komodo_group: "komodo"
+komodo_user_uid:
 
 komodo_home: "/home/{{ komodo_user }}"
 komodo_bin_dir: "{{ komodo_home }}/.local/bin"
