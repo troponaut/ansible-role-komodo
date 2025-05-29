@@ -37,6 +37,7 @@
     owner: "{{ komodo_user }}"
     group: "{{ komodo_group }}"
     mode: "0750"
+    force: true
   become: true
   when: ssl_enabled | default(true)
 
