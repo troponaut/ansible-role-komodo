@@ -1,0 +1,13 @@
+---
+# .ansible-lint
+
+profile: shared # min, basic, moderate,safety, shared, production
+
+exclude_paths:
+  - .cache/
+  - test/fixtures/formatting-before/
+  - test/fixtures/formatting-prettier/
+  - .tox
+  - .github
+  - .vscode
+  - .ansible

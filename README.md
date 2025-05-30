@@ -53,6 +53,8 @@ files as shown in the below examples. [I have also included a migration guide be
 The remaining variables in [`defaults/main.yml`](./defaults/main.yml) are set to sensible values, but you should
 review them and set according to your own needs
 
+
+
 ## Overriding default configuration templates
 
 In some cases, it may be desirable to have more control over the exact service files and/or configuration files deployed to each periphery node.
@@ -67,7 +69,7 @@ and behavior of your supplied `komodo_config_file_template`.
 
 ## Installation / Setup
 
-1. `ansible-galaxy role install bpbradley.komodo`
+1. `ansible-galaxy role install troponaut.komodo`
 2. Create an `inventory/komodo.yml` file which specifies your komodo hosts and indicates the allowed_ips if desired
     ```yaml
     komodo:
@@ -84,7 +86,33 @@ and behavior of your supplied `komodo_config_file_template`.
     ```
     Note that this inventory file is for v1.17.1+ komodo versions, as it is supporting the new IPv6 translation layer, either with
     the `'::ffff:` prefix in the `komodo_allowed_ips` or with a `komodo_bind_ip` of `0.0.0.0` as described in the documentation.
-   
+
+3. **Optional** Mounting a Network Share for Persistent Docker Data
+
+This role supports mounting a network share (such as NFS or CIFS) to provide persistent storage for Docker data or other Komodo-related files. This is useful if you want to store data outside the local filesystem, for example, on a NAS or remote server.
+
+You can control this feature using the following variables (see `defaults/main.yml` for full details):
+- **`komodo_mount_path`**  
+  - The local path where the share will be mounted (e.g., `/mnt/komodo_data`).
+- **`komodo_mount_server`**
+  - The server where the network share is hosted (e.g., `nfs-server.example.local`).
+- **`komodo_mount_server_path`**  
+  - The path on the server where the share is located (e.g., `/exports/komodo`).
+- **`komodo_mount_fstype`**  
+  - Filesystem type, such as `nfs`, `cifs`, etc.
+
+When enabled, the role will ensure the mount is present and available before starting the Komodo service. This is especially useful when bind mounting network shares to Docker containers.
+
+**Example:**
+
+```yaml
+komodo_mount_path: "/mnt/komodo_data"
+komodo_mount_server: "nfs-server.example.local"
+komodo_mount_server_path: "/exports/komodo"
+komodo_mount_fstype: "nfs"
+
+```
+
 4. **Optional** but recommended. Set an encrypted passkey using `ansible-vault` which matches the passkey set in Komodo Core.
 
     ```sh
@@ -215,4 +243,4 @@ If you are v1.17.0 or earlier and using `komodo_allowed_ips`, and intend to upda
                 - "192.168.10.20"
             komodo_bind_ip: 0.0.0.0
   ```
-    
+

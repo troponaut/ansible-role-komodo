@@ -1,5 +1,4 @@
 ---
-
 - name: Ensure ACL package exists when creating a new user
   ansible.builtin.package:
     name: acl
@@ -32,6 +31,7 @@
 
 - name: Ensure SSL directories exists
   become: true
+  when: ssl_enabled | default(true)
   block:
     - name: Ensure /etc/komodo exists
       ansible.builtin.file:
@@ -49,7 +49,6 @@
         group: "{{ komodo_group }}"
         mode: "0750"
         recurse: true
-  when: ssl_enabled | default(true)
 
 - name: Enable lingering for Komodo user
   ansible.builtin.command: loginctl enable-linger {{ komodo_user }}
@@ -92,7 +91,6 @@
     mode: "0644"
     owner: "{{ komodo_user }}"
     group: "{{ komodo_group }}"
-
 - name: Reload systemd for Komodo user
   ansible.builtin.shell: |
     export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
@@ -108,3 +106,30 @@
   become: true
   become_user: "{{ komodo_user }}"
   changed_when: false
+
+- name: Ensure mount directory exists
+  ansible.builtin.file:
+    path: "{{ komodo_mount_path }}"
+    state: directory
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_user }}"
+    mode: "0770"
+  when:
+    - komodo_mount_path is defined
+    - komodo_mount_path | length > 0
+
+- name: Mount data directory
+  ansible.posix.mount:
+    path: "{{ komodo_mount_path }}"
+    src: "{{ komodo_mount_server }} ~ ':' ~ {{ komodo_mount_server_path }}"
+    boot: true
+    fstype: "{{ komodo_mount_fstype }}"
+    opts: defaults
+    state: mounted
+  when:
+    - komodo_mount_path is defined
+    - komodo_mount_path | length > 0
+    - komodo_mount_server is defined
+    - komodo_mount_server | lenth > 0
+    - komodo_mount_server_path is defined
+    - komodo_mount_server_path | lenth > 0

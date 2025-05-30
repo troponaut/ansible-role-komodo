@@ -1,5 +1,4 @@
 ---
-
 - name: Stop periphery service
   ansible.builtin.shell: |
     export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"

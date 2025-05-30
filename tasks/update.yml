@@ -1,5 +1,4 @@
 ---
-
 - name: Stop periphery service
   ansible.builtin.shell: |
     export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
@@ -29,6 +28,7 @@
 
 - name: Ensure SSL directories exists
   become: true
+  when: ssl_enabled | default(true)
   block:
     - name: Ensure /etc/komodo exists
       ansible.builtin.file:
@@ -46,7 +46,6 @@
         group: "{{ komodo_group }}"
         mode: "0750"
         recurse: true
-  when: ssl_enabled | default(true)
 
 - name: Fail if unsupported architecture
   ansible.builtin.fail:
