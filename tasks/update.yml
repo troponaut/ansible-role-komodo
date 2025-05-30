@@ -85,6 +85,22 @@
   become_user: "{{ komodo_user }}"
   changed_when: false
 
+- name: Mount data directory
+  ansible.posix.mount:
+    path: "{{ komodo_mount_path }}"
+    src: "{{ komodo_mount_server }} ~ ':' ~ {{ komodo_mount_server_path }}"
+    boot: true
+    fstype: "{{ komodo_mount_fstype }}"
+    opts: defaults
+    state: mounted
+  when:
+    - komodo_mount_path is defined
+    - komodo_mount_path | length > 0
+    - komodo_mount_server is defined
+    - komodo_mount_server | length > 0
+    - komodo_mount_server_path is defined
+    - komodo_mount_server_path | length > 0
+
 - name: Restart periphery service after update
   ansible.builtin.shell: |
     export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
