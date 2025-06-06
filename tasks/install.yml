@@ -5,6 +5,16 @@
     state: present
   become: true
   when: komodo_user_exists is not defined or not komodo_user_exists
+  tags: komodo-user
+
+- name: Ensure neccesary packages for systemd user scope are installed
+  ansible.builtin.apt:
+    name:
+      - systemd-container
+      - libpam-systemd
+    state: present
+  become: true
+  tags: komodo-systemd-config
 
 - name: Ensure Komodo user exists
   ansible.builtin.user:
@@ -14,8 +24,26 @@
     groups: docker
     append: true
     create_home: true
+    password: "{{ komodo_user_password | default(omit) }}"
     home: "{{ komodo_home }}"
   when: komodo_user_exists is not defined or not komodo_user_exists
+  tags: komodo-user
+
+- name: Get Komodo user UID
+  tags:
+    - komodo-user
+    - komodo-systemd-config
+  block:
+    - name: Get Komodo user UID if not provided
+      ansible.builtin.command: id -u {{ komodo_user }}
+      become: true
+      register: komodo_uid
+      changed_when: false
+      when: komodo_user_uid is not defined
+      
+    - name: Set komodo_uid fact
+      ansible.builtin.set_fact:
+        komodo_uid: "{{ komodo_user_uid | string if komodo_user_uid is defined else komodo_uid.stdout }}"
 
 - name: Ensure necessary directories
   ansible.builtin.file:
@@ -28,6 +56,7 @@
     - "{{ komodo_bin_dir }}"
     - "{{ komodo_config_dir }}"
     - "{{ komodo_service_dir }}"
+  tags: komodo-user
 
 - name: Ensure SSL directories exists
   become: true
@@ -49,18 +78,28 @@
         group: "{{ komodo_group }}"
         mode: "0750"
         recurse: true
+  tags: komodo-user
 
 - name: Enable lingering for Komodo user
   ansible.builtin.command: loginctl enable-linger {{ komodo_user }}
   changed_when: false
+  tags:
+    - komodo-systemd-config
+    - komodo-user
 
-- name: Stop periphery service
-  ansible.builtin.shell: |
-    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
-    systemctl --user stop periphery || true
+- name: Stop periphery service via systemd_service
+  ansible.builtin.systemd_service:
+    scope: user
+    name: periphery
+    state: stopped
   become: true
   become_user: "{{ komodo_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ komodo_uid }}"
   changed_when: false
+  tags:
+    - komodo-systemd-config
+    - komodo-user
 
 - name: Fail if unsupported architecture
   ansible.builtin.fail:
@@ -91,14 +130,18 @@
     mode: "0644"
     owner: "{{ komodo_user }}"
     group: "{{ komodo_group }}"
+  tags: komodo-systemd-config
 
-- name: Reload systemd for Komodo user
-  ansible.builtin.shell: |
-    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
-    systemctl --user daemon-reload
+- name: Reload komodo’s user unit files
+  ansible.builtin.systemd_service:
+    scope: user
+    daemon_reload: true
   become: true
   become_user: "{{ komodo_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ komodo_uid }}"
   changed_when: false
+  tags: komodo-systemd-config
 
 - name: Ensure mount directory exists
   ansible.builtin.file:
@@ -127,37 +170,15 @@
     - komodo_mount_server_path is defined
     - komodo_mount_server_path | length > 0
 
-- name: Enable and start periphery service
-  ansible.builtin.shell: |
-    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
-    systemctl --user enable --now periphery
+- name: Start periphery service
+  ansible.builtin.systemd_service:
+    scope: user
+    name: periphery
+    enabled: true
+    state: started
   become: true
   become_user: "{{ komodo_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ komodo_uid }}"
   changed_when: false
-
-- name: Ensure mount directory exists
-  ansible.builtin.file:
-    path: "{{ komodo_mount_path }}"
-    state: directory
-    owner: "{{ komodo_user }}"
-    group: "{{ komodo_user }}"
-    mode: "0770"
-  when:
-    - komodo_mount_path is defined
-    - komodo_mount_path | length > 0
-
-- name: Mount data directory
-  ansible.posix.mount:
-    path: "{{ komodo_mount_path }}"
-    src: "{{ komodo_mount_server }} ~ ':' ~ {{ komodo_mount_server_path }}"
-    boot: true
-    fstype: "{{ komodo_mount_fstype }}"
-    opts: defaults
-    state: mounted
-  when:
-    - komodo_mount_path is defined
-    - komodo_mount_path | length > 0
-    - komodo_mount_server is defined
-    - komodo_mount_server | length > 0
-    - komodo_mount_server_path is defined
-    - komodo_mount_server_path | length > 0
+  tags: komodo-systemd-config
