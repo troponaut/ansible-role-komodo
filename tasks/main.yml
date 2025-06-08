@@ -8,7 +8,8 @@
 - name: Set komodo user facts
   ansible.builtin.set_fact:
     komodo_user_exists: "{{ komodo_user_check.rc == 0 }}"
-    komodo_user_uid: "{{ komodo_user_check.stdout | default(komodo_user_uid) }}"
+    komodo_user_uid: >-
+      {{ komodo_user_check.stdout if komodo_user_check.stdout | length > 0 else komodo_user_uid }}
 
 # Choose binary_name based on user override, architecture, and version
 - name: Select Komodo binary
