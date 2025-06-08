@@ -46,8 +46,5 @@
 
 - name: Include share mount tasks
   ansible.builtin.import_tasks: share_mount.yml
-  when:
-    - komodo_action == "install"
-    - komodo_mount_path is defined and komodo_mount_path | length > 0
-    - komodo_mount_server is defined and komodo_mount_server | length > 0
-    - komodo_mount_server_path is defined and komodo_mount_server_path | length > 0
+  when: komodo_action == "install" or komodo_action == "uninstall"
+

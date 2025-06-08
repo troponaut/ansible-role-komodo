@@ -1,27 +1,37 @@
 ---
-- name: Ensure mount directory exists
-  ansible.builtin.file:
-    path: "{{ komodo_mount_path }}"
-    state: directory
-    owner: "{{ komodo_user }}"
-    group: "{{ komodo_user }}"
-    mode: "0770"
-  when:
-    - komodo_mount_path is defined
-    - komodo_mount_path | length > 0
 
-- name: Mount data directory
-  ansible.posix.mount:
-    path: "{{ komodo_mount_path }}"
-    src: "{{ komodo_mount_server }} ~ ':' ~ {{ komodo_mount_server_path }}"
-    boot: true
-    fstype: "{{ komodo_mount_fstype }}"
-    opts: defaults
-    state: mounted
+- name: Ensure shared data dir is mounted
   when:
-    - komodo_mount_path is defined
-    - komodo_mount_path | length > 0
-    - komodo_mount_server is defined
-    - komodo_mount_server | length > 0
-    - komodo_mount_server_path is defined
-    - komodo_mount_server_path | length > 0
+    - komodo_action ='install'
+    - komodo_mount_path is defined and komo do_mount_path | length > 0
+    - komodo_mount_server is defined and komodo_mount_server | length > 0
+    - komodo_mount_server_path is defined and komodo_mount_server_path | length > 0
+  block:
+    - name: Ensure mount directory exists
+      ansible.builtin.file:
+        path: "{{ komodo_mount_path }}"
+        state: directory
+        owner: "{{ komodo_user }}"
+        group: "{{ komodo_user }}"
+        mode: "0770"
+    - name: Mount data directory
+      ansible.posix.mount:
+        path: "{{ komodo_mount_path }}"
+        src: "{{ komodo_mount_server }} ~ ':' ~ {{ komodo_mount_server_path }}"
+        boot: true
+        fstype: "{{ komodo_mount_fstype }}"
+        opts: defaults
+        state: mounted
+
+- name: Remove shared data mounts
+  when:
+    - komodo_action ='uninstall'
+  block:
+    - name: Unmount data directory
+      ansible.posix.mount:
+        path: "{{ komodo_mount_path }}"
+        state: unmounted
+    - name: Remove mount directory
+      ansible.builtin.file:
+        path: "{{ komodo_mount_path }}"
+        state: absent
