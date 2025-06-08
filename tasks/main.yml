@@ -1,14 +1,14 @@
 ---
-
 - name: Check if Komodo user exists
   ansible.builtin.command: id -u {{ komodo_user }}
-  register: komodo_user_check
+  register: komodo_uid
   failed_when: false
   changed_when: false
 
-- name: Set komodo_user_exists fact
+- name: Set komodo user facts
   ansible.builtin.set_fact:
-    komodo_user_exists: "{{ komodo_user_check.rc == 0 }}"
+    komodo_user_exists: "{{ komodo_uid.rc == 0 }}"
+    komodo_user_uid: "{{ komodo_user_uid | komodo_uid.stdout }}"
 
 # Choose binary_name based on user override, architecture, and version
 - name: Select Komodo binary
@@ -25,14 +25,32 @@
       {%- endif -%} {%- endif -%}
   when: komodo_action == "install" or komodo_action == "update"
 
+- name: Include user creation tasks
+  ansible.builtin.import_tasks: komodo_user.yaml
+  tags: komodo-user
+  when:
+    - komodo_action == "install"
+    - komodo_user_exists is not defined or not komodo_user_exists
+
 - name: Include install tasks
-  ansible.builtin.import_tasks: install.yml
+  ansible.builtin.import_tasks: install.yaml
   when: komodo_action == "install"
 
 - name: Include update tasks
-  ansible.builtin.import_tasks: update.yml
+  ansible.builtin.import_tasks: update.yaml
   when: komodo_action == "update"
 
 - name: Include uninstall tasks
-  ansible.builtin.import_tasks: uninstall.yml
+  ansible.builtin.import_tasks: uninstall.yaml
   when: komodo_action == "uninstall"
+
+- name: Include share mount tasks
+  ansible.builtin.import_tasks: share_mount.yaml
+  when:
+    - komodo_action == "install"
+    - komodo_mount_path is defined and komodo_mount_path | length > 0
+    - komodo_mount_server is defined and komodo_mount_server | length > 0
+    - komodo_mount_server_path is defined and komodo_mount_server_path | length > 0
+
+
+

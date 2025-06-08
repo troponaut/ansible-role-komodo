@@ -1,10 +1,13 @@
 ---
 - name: Stop periphery service
-  ansible.builtin.shell: |
-    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
-    systemctl --user stop periphery || true
+  ansible.builtin.systemd_service:
+    scope: user
+    name: periphery
+    state: stopped
   become: true
   become_user: "{{ komodo_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ komodo_user_uid }}"
   changed_when: false
 
 - name: Remove old Komodo Periphery binary
@@ -77,34 +80,15 @@
     owner: "{{ komodo_user }}"
     group: "{{ komodo_group }}"
 
-- name: Reload systemd for Komodo user
-  ansible.builtin.shell: |
-    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
-    systemctl --user daemon-reload
+- name: Reload and restart periphery service
+  ansible.builtin.systemd_service:
+    scope: user
+    name: periphery
+    enabled: true
+    state: restarted
+    daemon_reload: true
   become: true
   become_user: "{{ komodo_user }}"
-  changed_when: false
-
-- name: Mount data directory
-  ansible.posix.mount:
-    path: "{{ komodo_mount_path }}"
-    src: "{{ komodo_mount_server }} ~ ':' ~ {{ komodo_mount_server_path }}"
-    boot: true
-    fstype: "{{ komodo_mount_fstype }}"
-    opts: defaults
-    state: mounted
-  when:
-    - komodo_mount_path is defined
-    - komodo_mount_path | length > 0
-    - komodo_mount_server is defined
-    - komodo_mount_server | length > 0
-    - komodo_mount_server_path is defined
-    - komodo_mount_server_path | length > 0
-
-- name: Restart periphery service after update
-  ansible.builtin.shell: |
-    export XDG_RUNTIME_DIR="/run/user/$(id -u {{ komodo_user }})"
-    systemctl --user restart periphery
-  become: true
-  become_user: "{{ komodo_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ komodo_user_uid }}"
   changed_when: false

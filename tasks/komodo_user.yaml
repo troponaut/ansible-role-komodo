@@ -1,0 +1,24 @@
+- name: Ensure ACL package exists when creating a new user
+  ansible.builtin.package:
+    name: acl
+    state: present
+  become: true
+
+- name: Ensure neccesary packages for systemd user scope are installed
+  ansible.builtin.apt:
+    name:
+      - systemd-container
+      - libpam-systemd
+    state: present
+  become: true
+
+- name: Ensure Komodo user exists
+  ansible.builtin.user:
+    name: "{{ komodo_user }}"
+    shell: /usr/sbin/nologin
+    uid: "{{ komodo_user_uid | default(omit) }}"
+    groups: docker
+    append: true
+    create_home: true
+    password: "{{ komodo_user_password | default(omit) }}"
+    home: "{{ komodo_home }}"

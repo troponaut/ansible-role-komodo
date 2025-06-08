@@ -11,7 +11,7 @@ komodo_bin_aarch64: "periphery-aarch64" # ARM64 binary name
 # User and group settings
 komodo_user: "komodo"            # System user to run Komodo service
 komodo_group: "komodo"           # System group for Komodo files
-komodo_user_uid: null             # UID for the Komodo user (null for auto)
+komodo_user_uid: null            # UID for the Komodo user (null for auto)
 
 # Home directory and paths
 komodo_home: "/home/{{ komodo_user }}"          # Base home directory for Komodo
