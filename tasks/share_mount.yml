@@ -1,3 +1,4 @@
+---
 - name: Ensure mount directory exists
   ansible.builtin.file:
     path: "{{ komodo_mount_path }}"

@@ -2,53 +2,53 @@
 # Komodo Periphery Role - Default Variables
 
 # Version and binaries
-komodo_version: "v1.17.5"         # Komodo periphery version to download
-komodo_bin: ""                    # Override to specify custom binary path
-komodo_bin_x86: "periphery-x86_64"      # x86_64 binary name
-komodo_bin_x86_legacy: "periphery"      # legacy x86_64 binary name
+komodo_version: "v1.17.5" # Komodo periphery version to download
+komodo_bin: "" # Override to specify custom binary path
+komodo_bin_x86: "periphery-x86_64" # x86_64 binary name
+komodo_bin_x86_legacy: "periphery" # legacy x86_64 binary name
 komodo_bin_aarch64: "periphery-aarch64" # ARM64 binary name
 
 # User and group settings
-komodo_user: "komodo"            # System user to run Komodo service
-komodo_group: "komodo"           # System group for Komodo files
-komodo_user_uid: null            # UID for the Komodo user (null for auto)
+komodo_user: "komodo" # System user to run Komodo service
+komodo_group: "komodo" # System group for Komodo files
+komodo_user_uid: # UID for the Komodo user (null for auto)
 
 # Home directory and paths
-komodo_home: "/home/{{ komodo_user }}"          # Base home directory for Komodo
-komodo_bin_dir: "{{ komodo_home }}/.local/bin"  # Directory for binaries
+komodo_home: "/home/{{ komodo_user }}" # Base home directory for Komodo
+komodo_bin_dir: "{{ komodo_home }}/.local/bin" # Directory for binaries
 komodo_bin_path: "{{ komodo_bin_dir }}/periphery" # Path to periphery binary
 
 # Configuration file settings
-komodo_config_dir: "{{ komodo_home }}/.config/komodo"             # Directory for config
-komodo_config_file_template: "periphery.config.toml.j2"           # Config template filename
+komodo_config_dir: "{{ komodo_home }}/.config/komodo" # Directory for config
+komodo_config_file_template: "periphery.config.toml.j2" # Config template filename
 komodo_config_path: "{{ komodo_config_dir }}/periphery.config.toml" # Destination config path
 
 # Systemd user service settings
-komodo_service_dir: "{{ komodo_home }}/.config/systemd/user"      # Systemd user service dir
-komodo_service_file_template: "periphery.service.j2"              # Service template filename
+komodo_service_dir: "{{ komodo_home }}/.config/systemd/user" # Systemd user service dir
+komodo_service_file_template: "periphery.service.j2" # Service template filename
 komodo_service_path: "{{ komodo_service_dir }}/periphery.service" # Destination service path
 
 # Repository and stack directories
-repo_dir: "{{ komodo_home }}/.komodo/repos"    # Directory for Komodo repositories
-stack_dir: "{{ komodo_home }}/.komodo/stacks"  # Directory for Komodo stacks
-stacks_polling_rate: "5-sec"                    # Polling interval for stacks
+repo_dir: "{{ komodo_home }}/.komodo/repos" # Directory for Komodo repositories
+stack_dir: "{{ komodo_home }}/.komodo/stacks" # Directory for Komodo stacks
+stacks_polling_rate: "5-sec" # Polling interval for stacks
 
 # Networking options
-komodo_bind_ip: "[::]"         # IP to bind (default IPv6 any). Set 0.0.0.0 to disable IPv6
-komodo_allowed_ips: []           # List of IPs allowed to access Komodo core
-periphery_port: 8120             # Port for Komodo periphery agent
+komodo_bind_ip: "[::]" # IP to bind (default IPv6 any). Set 0.0.0.0 to disable IPv6
+komodo_allowed_ips: [] # List of IPs allowed to access Komodo core
+periphery_port: 8120 # Port for Komodo periphery agent
 
 # Security and SSL
-passkey: ""                   # Plaintext or vault encrypted passkey for securing traffic
-ssl_enabled: true               # Enable SSL directories and certificates
+passkey: "" # Plaintext or vault encrypted passkey for securing traffic
+ssl_enabled: true # Enable SSL directories and certificates
 
 # Logging settings
-logging_level: "info"                        # Overall logging level (e.g., debug, info)
-logging_stdio: "standard"                    # Logging to stdout/stderr format
+logging_level: "info" # Overall logging level (e.g., debug, info)
+logging_stdio: "standard" # Logging to stdout/stderr format
 logging_opentelemetry_service_name: "Komodo-Periphery" # OTEL service name
 
 # NFS Mount options (optional)
-komodo_mount_path: ""             # Local mount point for remote data
-komodo_mount_server: ""           # Remote NFS server address
-komodo_mount_server_path: ""      # Remote path on NFS server
-komodo_mount_fstype: "nfs"        # Filesystem type for mounting
+komodo_mount_path: "" # Local mount point for remote data
+komodo_mount_server: "" # Remote NFS server address
+komodo_mount_server_path: "" # Remote path on NFS server
+komodo_mount_fstype: "nfs" # Filesystem type for mounting

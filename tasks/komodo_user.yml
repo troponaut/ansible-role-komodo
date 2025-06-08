@@ -1,3 +1,4 @@
+---
 - name: Ensure ACL package exists when creating a new user
   ansible.builtin.package:
     name: acl
