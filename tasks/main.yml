@@ -1,16 +1,14 @@
 ---
 - name: Check if Komodo user exists
-  ansible.builtin.getent:
-    database: passwd
-    key: "{{ komodo_user }}"
-  failed_when: false      # keep going if the user is absent
+  ansible.builtin.command: id -u {{ komodo_user }}
+  register: komodo_user_check
+  failed_when: false
   changed_when: false
 
 - name: Set komodo user facts
   ansible.builtin.set_fact:
-    komodo_user_exists: "{{ ansible_facts.getent_passwd[komodo_user] is defined }}"
-    komodo_user_uid: >-
-      "{{ ansible_facts.getent_passwd[komodo_user][2] | default(komodo_user_uid) }}"
+    komodo_user_exists: "{{ komodo_user_check.rc == 0 }}"
+    komodo_user_uid: "{{ komodo_user_check.stdout | default(komodo_user_uid) }}"
 
 # Choose binary_name based on user override, architecture, and version
 - name: Select Komodo binary
@@ -31,8 +29,7 @@
   ansible.builtin.import_tasks: komodo_user.yml
   tags: komodo-user
   when:
-    - komodo_action == "install"
-    - komodo_user_exists is not defined or not komodo_user_exists
+    - komodo_action == "install" or komodo_action == "update"
 
 - name: Include install tasks
   ansible.builtin.import_tasks: install.yml
