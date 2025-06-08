@@ -1,8 +1,9 @@
 ---
-- name: Stop periphery service via systemd_service
+- name: Stop and Disable the periphery service
   ansible.builtin.systemd_service:
     scope: user
     name: periphery
+    enabled: false
     state: stopped
   become: true
   become_user: "{{ komodo_user }}"
@@ -25,18 +26,6 @@
     - "{{ komodo_service_dir }}"
     - "/etc/komodo/ssl"
   become: true
-
-- name: Disable and remove periphery service
-  ansible.builtin.systemd_service:
-    scope: user
-    name: periphery
-    enabled: false
-    state: stopped
-  become: true
-  become_user: "{{ komodo_user }}"
-  environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ komodo_user_uid }}"
-  changed_when: false
 
 - name: Remove komodo directories
   ansible.builtin.file:
