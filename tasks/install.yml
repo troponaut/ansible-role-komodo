@@ -46,6 +46,7 @@
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ komodo_user_uid }}"
   changed_when: false
+  ignore_errors: true
 
 - name: Fail if unsupported architecture
   ansible.builtin.fail:

@@ -1,13 +1,8 @@
 ---
-- name: Ensure ACL package exists when creating a new user
-  ansible.builtin.package:
-    name: acl
-    state: present
-  become: true
-
 - name: Ensure neccesary packages for systemd user scope are installed
-  ansible.builtin.apt:
-    name:
+  ansible.builtin.package:
+    name: 
+      - acl
       - systemd-container
       - libpam-systemd
     state: present
