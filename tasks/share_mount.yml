@@ -16,7 +16,7 @@
     - name: Mount data directory
       ansible.posix.mount:
         path: "{{ komodo_mount_path }}"
-        src: "{{ komodo_mount_server }} ~ ':' ~ {{ komodo_mount_server_path }}"
+        src: "{{ komodo_mount_server }}:{{ komodo_mount_server_path }}"
         boot: true
         fstype: "{{ komodo_mount_fstype }}"
         opts: defaults
