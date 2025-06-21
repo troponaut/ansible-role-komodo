@@ -2,8 +2,8 @@
 # Komodo Periphery Role - Default Variables
 
 # Version and binaries
-komodo_version: "v1.17.5" # Komodo periphery version to download
-komodo_bin:  # Override to specify custom binary path
+komodo_version: "v1.18.3" # Komodo periphery version to download
+komodo_bin: "" # Override to specify custom binary path
 komodo_bin_x86: "periphery-x86_64" # x86_64 binary name
 komodo_bin_x86_legacy: "periphery" # legacy x86_64 binary name
 komodo_bin_aarch64: "periphery-aarch64" # ARM64 binary name
