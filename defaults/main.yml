@@ -3,7 +3,7 @@
 
 # Version and binaries
 komodo_version: "v1.17.5" # Komodo periphery version to download
-komodo_bin: "" # Override to specify custom binary path
+komodo_bin:  # Override to specify custom binary path
 komodo_bin_x86: "periphery-x86_64" # x86_64 binary name
 komodo_bin_x86_legacy: "periphery" # legacy x86_64 binary name
 komodo_bin_aarch64: "periphery-aarch64" # ARM64 binary name
@@ -29,8 +29,9 @@ komodo_service_file_template: "periphery.service.j2" # Service template filename
 komodo_service_path: "{{ komodo_service_dir }}/periphery.service" # Destination service path
 
 # Repository and stack directories
-repo_dir: "{{ komodo_home }}/.komodo/repos" # Directory for Komodo repositories
-stack_dir: "{{ komodo_home }}/.komodo/stacks" # Directory for Komodo stacks
+root_directory: "/etc/komodo" # Root directory for Komodo
+repo_dir: "{{ root_directory }}/repos" # Directory for Komodo repositories
+stack_dir: "{{ root_directory }}/stacks" # Directory for Komodo stacks
 stacks_polling_rate: "5-sec" # Polling interval for stacks
 
 # Networking options
@@ -39,7 +40,7 @@ komodo_allowed_ips: [] # List of IPs allowed to access Komodo core
 periphery_port: 8120 # Port for Komodo periphery agent
 
 # Security and SSL
-passkey: "" # Plaintext or vault encrypted passkey for securing traffic
+passkey:  # Plaintext or vault encrypted passkey for securing traffic
 ssl_enabled: true # Enable SSL directories and certificates
 
 # Logging settings
@@ -48,7 +49,7 @@ logging_stdio: "standard" # Logging to stdout/stderr format
 logging_opentelemetry_service_name: "Komodo-Periphery" # OTEL service name
 
 # NFS Mount options (optional)
-komodo_mount_path: "" # Local mount point for remote data
-komodo_mount_server: "" # Remote NFS server address
-komodo_mount_server_path: "" # Remote path on NFS server
-komodo_mount_fstype: "nfs" # Filesystem type for mounting
+komodo_mount_path: # Local mount point for remote data
+komodo_mount_server: # Remote NFS server address
+komodo_mount_server_path: # Remote path on NFS server
+komodo_mount_fstype: # Filesystem type for mounting
