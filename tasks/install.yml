@@ -17,20 +17,30 @@
   block:
     - name: Ensure /etc/komodo exists
       ansible.builtin.file:
-        path: "/etc/komodo/ssl"
-        state: directory
-        owner: "{{ komodo_user }}"
-        group: "{{ komodo_group }}"
-        mode: "0750"
-        recurse: true
-    - name: Ensure /etc/komodo exists
-      ansible.builtin.file:
         path: "/etc/komodo"
         state: directory
         owner: "{{ komodo_user }}"
         group: "{{ komodo_group }}"
         mode: "0750"
         recurse: true
+    - name: Ensure /etc/komodo/ssl exists
+      ansible.builtin.file:
+        path: "/etc/komodo/ssl"
+        state: directory
+        owner: "{{ komodo_user }}"
+        group: "{{ komodo_group }}"
+        mode: "0750"
+        recurse: true
+
+- name: Ensure docker_data mount directory exists
+  ansible.builtin.file:
+    path: "{{ komodo_docker_data }}"
+    state: directory
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+    mode: "0750"
+    recurse: true
+  when: komodo_docker_data is defined and komodo_docker_data | length > 0
 
 - name: Enable lingering for Komodo user
   ansible.builtin.command: loginctl enable-linger {{ komodo_user }}

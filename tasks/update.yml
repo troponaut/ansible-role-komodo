@@ -50,6 +50,16 @@
         mode: "0750"
         recurse: true
 
+- name: Ensure docker_data mount directory exists
+  ansible.builtin.file:
+    path: "{{ komodo_docker_data }}"
+    state: directory
+    owner: "{{ komodo_user }}"
+    group: "{{ komodo_group }}"
+    mode: "0750"
+    recurse: true
+  when: komodo_docker_data is defined and komodo_docker_data | length > 0
+
 - name: Fail if unsupported architecture
   ansible.builtin.fail:
     msg: "Unsupported architecture: {{ ansible_architecture }}. Supported architectures are x86_64 and aarch64."
