@@ -7,7 +7,6 @@
       - systemd-container
       - libpam-systemd
     state: present
-  become: true
 
 - name: Ensure Komodo user exists
   ansible.builtin.user:
