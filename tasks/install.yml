@@ -39,7 +39,6 @@
     owner: "{{ komodo_user }}"
     group: "{{ komodo_group }}"
     mode: "0750"
-    recurse: true
   when: komodo_docker_data is defined and komodo_docker_data | length > 0
 
 - name: Enable lingering for Komodo user
