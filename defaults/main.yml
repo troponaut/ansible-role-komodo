@@ -49,7 +49,7 @@ logging_stdio: "standard" # Logging to stdout/stderr format
 logging_opentelemetry_service_name: "Komodo-Periphery" # OTEL service name
 
 # NFS Mount options (optional)
-komodo_mount_path: # Local mount point for remote data
-komodo_mount_server: # Remote NFS server address
-komodo_mount_server_path: # Remote path on NFS server
-komodo_mount_fstype: # Filesystem type for mounting
+# komodo_mount_path: # Local mount point for remote data
+# komodo_mount_server: # Remote NFS server address
+# komodo_mount_server_path: # Remote path on NFS server
+# komodo_mount_fstype: # Filesystem type for mounting
